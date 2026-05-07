@@ -4,7 +4,7 @@ A Python-based Security Operations Center (SOC) detection automation tool that a
 
 ![Python](https://img.shields.io/badge/Python-3.8%2B-blue?style=flat-square&logo=python)
 ![Streamlit](https://img.shields.io/badge/Streamlit-Dashboard-FF4B4B?style=flat-square&logo=streamlit)
-![MITRE ATT&CK](https://img.shields.io/badge/MITRE-ATT%26CK%20v14-red?style=flat-square)
+![MITRE ATT&CK](https://img.shields.io/badge/MITRE-ATT%26CK%20v19-red?style=flat-square)
 ![Rules](https://img.shields.io/badge/Detection%20Rules-50-00FFAA?style=flat-square)
 
 ---
@@ -25,27 +25,16 @@ This tool simulates a core SOC detection workflow:
 
 ## System Architecture
 
-```
-Raw Input
-(log file / pasted line)
-        ↓
-Preprocessing Engine        ← preprocessor.py
-(lowercase, normalize, strip noise)
-        ↓
-Pattern Detection           ← detector.py + rules/patterns.json
-(50 regex rules across 14 tactics)
-        ↓
-ATT&CK Mapping Engine       ← detector.py + enterprise-attack.json
-(technique ID, tactic, confidence, remediation)
-        ↓
-Reporting Engine            ← reporter.py
-(JSON report, CSV, Navigator layer)
-        ↓
-Streamlit Dashboard         ← app.py
-(metrics, charts, attack chain timeline, exports)
-```
+![attck-mapper Pipeline Architecture](assets/architecture.png)
 
----
+| Stage | File | What it does |
+|---|---|---|
+| Raw Input | — | Log files, Sysmon, auth.log, firewall alerts |
+| Preprocessing | `preprocessor.py` | Lowercase, normalize, strip noise |
+| Pattern Detection | `detector.py` + `rules/patterns.json` | 50 regex rules across 14 tactics |
+| ATT&CK Mapping | `detector.py` + `enterprise-attack.json` | Technique ID, tactic, confidence, remediation |
+| Reporting | `reporter.py` | JSON, CSV, Navigator layer exports |
+| Dashboard | `app.py` | Streamlit UI — metrics, charts, timeline, exports |
 
 ## Features
 
@@ -278,7 +267,7 @@ No Python changes required to add new detection rules.
 | ATT&CK dataset | mitreattack-python, STIX2 |
 | Pattern matching | Python re (regex) |
 | Exports | JSON, CSV, Navigator JSON |
-| Threat framework | MITRE ATT&CK Enterprise v14 |
+| Threat framework | MITRE ATT&CK Enterprise v19 |
 
 ---
 

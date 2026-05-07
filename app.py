@@ -344,7 +344,7 @@ with st.sidebar:
     st.markdown("---")
     st.markdown(
         '<p style="font-size:0.75rem;color:#8B9AAD;font-family:\'Share Tech Mono\',monospace;">'
-        'SOC Detection Analyzer<br>MITRE ATT&CK Enterprise v14</p>',
+        'SOC Detection Analyzer<br>MITRE ATT&CK Enterprise v19</p>',
         unsafe_allow_html=True
     )
 
@@ -634,6 +634,6 @@ st.markdown("---")
 st.markdown(
     '<p style="text-align:center;font-family:\'Share Tech Mono\',monospace;'
     'font-size:0.75rem;color:#8B9AAD;">'
-    'SOC Detection Analyzer · MITRE ATT&CK Enterprise v14 · Built with Python & Streamlit</p>',
+    'SOC Detection Analyzer · MITRE ATT&CK Enterprise v19 · Built with Python & Streamlit</p>',
     unsafe_allow_html=True
 )
